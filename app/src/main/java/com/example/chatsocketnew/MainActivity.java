@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("isServer", true);
                 intent.putExtra("username", username);
                 startActivity(intent);
-
+                finish();
             }
         });
 
@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("serverIp", ip);
                 intent.putExtra("username", username); // Username
                 startActivity(intent);
+                finish();
             }
         });
     }

@@ -13,9 +13,11 @@ public class ServidorSocket extends Thread {
     private OutputStream output;
     private boolean running;
     private ActivityChat activityChat;
+    private String username; // Adiciona o username do host
 
-    public ServidorSocket(ActivityChat activity) {
+    public ServidorSocket(ActivityChat activity, String username) {
         this.activityChat = activity;
+        this.username = username;
     }
 
     public void startServer(int port) {
@@ -60,8 +62,9 @@ public class ServidorSocket extends Thread {
             @Override
             public void run() {
                 try {
-                    System.out.println("Enviando mensagem: " + message);
-                    output.write((message + "\n").getBytes());
+                    String messageToSend = username + ": " + message;  // Adiciona o username à mensagem
+                    System.out.println("Enviando mensagem: " + messageToSend);
+                    output.write((messageToSend + "\n").getBytes());
                     output.flush();
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -12,9 +12,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
@@ -64,7 +61,7 @@ public class ActivityChat extends AppCompatActivity {
         username = getIntent().getStringExtra("username"); // Busca o username digitado
 
         if (isServer) {
-            servidorSocket = new ServidorSocket(this);
+            servidorSocket = new ServidorSocket(this, username);  // Adiciona o username como parâmetro
             servidorSocket.startServer(8080);
 
             String localIpAddress = getLocalIpAddress();
@@ -76,11 +73,13 @@ public class ActivityChat extends AppCompatActivity {
             clienteSocket.connectToServer(serverIp, 8080);
         }
 
+
         btnEnviar.setOnClickListener(v -> {
             String mensagem = inputMensagem.getText().toString().trim();
-            String nomeUsuario = getIntent().getStringExtra("username");
+            String nomeUsuario = username; // Usa o username correto
+
             if (!mensagem.isEmpty()) {
-                Message message = new Message(mensagem, true, nomeUsuario);
+                Message message = new Message(mensagem, true, nomeUsuario); // Mensagem enviada pelo próprio usuário
                 addMessage(message);
 
                 if (isServer && servidorSocket != null) {
@@ -116,5 +115,4 @@ public class ActivityChat extends AppCompatActivity {
             }
         }
     }
-
 }
