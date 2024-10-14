@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
             String username = editTextUsername.getText().toString().trim(); // Username
             String ip = editTextIPconectar.getText().toString();
             System.out.println("IP digitado: " + ip);
-
             // Verifica se o campo tá vazio
             if (username.isEmpty()) {
                 Toast.makeText(MainActivity.this, "Insira um nome.", Toast.LENGTH_SHORT).show();
