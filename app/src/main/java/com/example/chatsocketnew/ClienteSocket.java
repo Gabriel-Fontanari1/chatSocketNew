@@ -14,8 +14,11 @@ public class ClienteSocket extends Thread {
     private boolean running;
     private ActivityChat activityChat;
 
-    public ClienteSocket(ActivityChat activity) {
+    private String username;
+
+    public ClienteSocket(ActivityChat activity, String username) {
         this.activityChat = activity;
+        this.username = username;
     }
 
     public void connectToServer(String ip, int port) {
@@ -49,7 +52,15 @@ public class ClienteSocket extends Thread {
         try {
             String receivedMessage;
             while (running && (receivedMessage = input.readLine()) != null) {
-                Message message = new Message(receivedMessage, false);
+                // Recebe a mensagem no formato: "username: mensagem"
+                String[] parts = receivedMessage.split(": ", 2); // Divide a mensagem
+                String senderName = parts[0]; // O primeiro pedaço é o nome do remetente
+                String messageContent = parts.length > 1 ? parts[1] : ""; // O resto é a mensagem
+
+                System.out.println("Mensagem recebida: " + receivedMessage);
+
+                // Adiciona a mensagem ao chat como uma mensagem recebida
+                Message message = new Message(messageContent, false, senderName); // Remetente é outro usuário
                 activityChat.addMessage(message);
             }
         } catch (Exception e) {
@@ -57,13 +68,16 @@ public class ClienteSocket extends Thread {
         }
     }
 
+
     public void sendMessage(String message) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    System.out.println("Enviando mensagem: " + message);
-                    output.write((message + "\n").getBytes());
+                    // Inclui o nome do usuário na mensagem
+                    String messageToSend = username + ": " + message;
+                    System.out.println("Enviando mensagem: " + messageToSend);
+                    output.write((messageToSend + "\n").getBytes());
                     output.flush();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -72,6 +86,7 @@ public class ClienteSocket extends Thread {
             }
         }).start();
     }
+
 
     public void disconnect() {
         running = false;

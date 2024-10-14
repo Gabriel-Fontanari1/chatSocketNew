@@ -12,9 +12,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
@@ -34,6 +31,7 @@ public class ActivityChat extends AppCompatActivity {
     ClienteSocket clienteSocket;
     ServidorSocket servidorSocket;
     boolean isServer;
+    String username; // Armazenar username
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +58,10 @@ public class ActivityChat extends AppCompatActivity {
 
         isServer = getIntent().getBooleanExtra("isServer", false);
 
+        username = getIntent().getStringExtra("username"); // Busca o username digitado
+
         if (isServer) {
-            servidorSocket = new ServidorSocket(this);
+            servidorSocket = new ServidorSocket(this, username);  // Adiciona o username como parâmetro
             servidorSocket.startServer(8080);
 
             String localIpAddress = getLocalIpAddress();
@@ -69,14 +69,17 @@ public class ActivityChat extends AppCompatActivity {
         } else {
             String serverIp = getIntent().getStringExtra("serverIp");
             System.out.println("IP do servidor recebido: " + serverIp);
-            clienteSocket = new ClienteSocket(this);
+            clienteSocket = new ClienteSocket(this, username);
             clienteSocket.connectToServer(serverIp, 8080);
         }
 
+
         btnEnviar.setOnClickListener(v -> {
             String mensagem = inputMensagem.getText().toString().trim();
+            String nomeUsuario = username; // Usa o username correto
+
             if (!mensagem.isEmpty()) {
-                Message message = new Message(mensagem, true);
+                Message message = new Message(mensagem, true, nomeUsuario); // Mensagem enviada pelo próprio usuário
                 addMessage(message);
 
                 if (isServer && servidorSocket != null) {
@@ -112,5 +115,4 @@ public class ActivityChat extends AppCompatActivity {
             }
         }
     }
-
 }
