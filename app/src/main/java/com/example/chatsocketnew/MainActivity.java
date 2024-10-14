@@ -25,18 +25,17 @@ public class MainActivity extends AppCompatActivity {
         editTextIPconectar = findViewById(R.id.editTextIPconectar);
 
         buttonBeHost.setOnClickListener(v -> {
-            servidorSocket = new ServidorSocket();
-            servidorSocket.startServer(12345);
             Intent intent = new Intent(MainActivity.this, ActivityChat.class);
+            intent.putExtra("isServer", true);
             startActivity(intent);
-            //tem que passar um intent extra, com os valores do hoster
         });
 
         buttonConfirmarIp.setOnClickListener(v -> {
             String ip = editTextIPconectar.getText().toString();
-            clienteSocket = new ClienteSocket();
-            clienteSocket.connectToServer(ip, 12345);
+            System.out.println("IP digitado: " + ip);
             Intent intent = new Intent(MainActivity.this, ActivityChat.class);
+            intent.putExtra("isServer", false);
+            intent.putExtra("serverIp", ip);
             startActivity(intent);
         });
     }
