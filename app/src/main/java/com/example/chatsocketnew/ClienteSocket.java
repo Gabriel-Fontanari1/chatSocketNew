@@ -1,9 +1,11 @@
 package com.example.chatsocketnew;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class ClienteSocket extends Thread {
     private Socket socket;
@@ -25,11 +27,18 @@ public class ClienteSocket extends Thread {
             running = true;
             System.out.println("Conectado ao servidor: " + ip + ":" + port);
             start();
-        } catch (Exception e) {
+        } catch (UnknownHostException e) {
+            System.out.println("Erro: Endereço IP ou nome de host desconhecido.");
             e.printStackTrace();
-            System.out.println("Erro ao conectar ao servidor.");
+        } catch (IOException e) {
+            System.out.println("Erro: Falha na conexão de rede (verifique se o IP/porta estão corretos).");
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Erro ao conectar ao servidor: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
 
     @Override
     public void run() {

@@ -61,9 +61,8 @@ public class ActivityChat extends AppCompatActivity {
         isServer = getIntent().getBooleanExtra("isServer", false);
 
         if (isServer) {
-            // Inicia o servidor
             servidorSocket = new ServidorSocket(this);
-            servidorSocket.startServer(12345);
+            servidorSocket.startServer(8080);
 
             String localIpAddress = getLocalIpAddress();
             textViewIp.setText("Seu IP: " + localIpAddress);
@@ -71,7 +70,7 @@ public class ActivityChat extends AppCompatActivity {
             String serverIp = getIntent().getStringExtra("serverIp");
             System.out.println("IP do servidor recebido: " + serverIp);
             clienteSocket = new ClienteSocket(this);
-            clienteSocket.connectToServer(serverIp, 12345);
+            clienteSocket.connectToServer(serverIp, 8080);
         }
 
         btnEnviar.setOnClickListener(v -> {
