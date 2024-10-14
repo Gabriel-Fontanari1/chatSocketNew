@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_ENVIADA = 1;
+    private static final int VIEW_TYPE_RECEBIDA = 2;
     private List<String> messageList;
 
     public RecyclerViewAdapter(List<String> messages) {
