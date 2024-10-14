@@ -10,16 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<String> messageList;
+    private List<Message> messageList;
 
-    public RecyclerViewAdapter(List<String> messages) {
+    public RecyclerViewAdapter(List<Message> messages) {
         this.messageList = messages;
     }
 
     @Override
     public int getItemViewType(int position) {
-        //tem que arrumar isso daqui ainda, o usuario não pode enviar pelos 2 layouts
-        return position % 2 == 0 ? R.layout.chat_one_line_enviamsg : R.layout.chat_one_line_recebemsg;
+        Message message = messageList.get(position);
+        return message.isSentByUser() ? R.layout.chat_one_line_enviamsg : R.layout.chat_one_line_recebemsg;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        String message = messageList.get(position);
+        Message message = messageList.get(position);
         ((MessageViewHolder) holder).bindMessage(message);
     }
 
@@ -40,29 +40,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
-        public TextView textViewUsrName;
         public TextView textViewUsrMsg;
-        public TextView textViewNomeRecebeMsg;
         public TextView textViewMsgRecebe;
 
         public MessageViewHolder(View itemView, int viewType) {
             super(itemView);
 
             if (viewType == R.layout.chat_one_line_enviamsg) {
-                textViewUsrName = itemView.findViewById(R.id.textViewUsrName);
                 textViewUsrMsg = itemView.findViewById(R.id.textViewUsrMsg);
-            }
-            else if (viewType == R.layout.chat_one_line_recebemsg) {
-                textViewNomeRecebeMsg = itemView.findViewById(R.id.textViewNomeRecebeMsg);
+            } else if (viewType == R.layout.chat_one_line_recebemsg) {
                 textViewMsgRecebe = itemView.findViewById(R.id.textViewMsgRecebe);
             }
         }
 
-        public void bindMessage(String message) {
-            if (textViewUsrMsg != null) {
-                textViewUsrMsg.setText(message);
-            } else if (textViewMsgRecebe != null) {
-                textViewMsgRecebe.setText(message);
+        public void bindMessage(Message message) {
+            if (message.isSentByUser() && textViewUsrMsg != null) {
+                textViewUsrMsg.setText(message.getContent());
+            } else if (!message.isSentByUser() && textViewMsgRecebe != null) {
+                textViewMsgRecebe.setText(message.getContent());
             }
         }
     }

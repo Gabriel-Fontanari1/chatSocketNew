@@ -18,13 +18,16 @@ public class ClienteSocket extends Thread {
 
     public void connectToServer(String ip, int port) {
         try {
+            System.out.println("Tentando conectar ao servidor: " + ip + ":" + port);
             socket = new Socket(ip, port);
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = socket.getOutputStream();
             running = true;
+            System.out.println("Conectado ao servidor: " + ip + ":" + port);
             start();
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Erro ao conectar ao servidor.");
         }
     }
 
@@ -33,7 +36,8 @@ public class ClienteSocket extends Thread {
         try {
             String receivedMessage;
             while (running && (receivedMessage = input.readLine()) != null) {
-                activityChat.addMessage(receivedMessage);  // Passa para a Activity
+                Message message = new Message(receivedMessage, false);
+                activityChat.addMessage(message);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,10 +46,12 @@ public class ClienteSocket extends Thread {
 
     public void sendMessage(String message) {
         try {
+            System.out.println("Enviando mensagem: " + message);
             output.write((message + "\n").getBytes());
             output.flush();
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Erro ao enviar mensagem.");
         }
     }
 

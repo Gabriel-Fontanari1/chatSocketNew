@@ -22,9 +22,11 @@ public class ServidorSocket extends Thread {
         try {
             serverSocket = new ServerSocket(port);
             running = true;
+            System.out.println("Servidor iniciado na porta: " + port);
             start();
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Erro ao iniciar o servidor.");
         }
     }
 
@@ -32,24 +34,34 @@ public class ServidorSocket extends Thread {
     public void run() {
         try {
             clientSocket = serverSocket.accept();
+            System.out.println("Cliente conectado: " + clientSocket.getInetAddress());
             input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             output = clientSocket.getOutputStream();
 
             String receivedMessage;
             while (running && (receivedMessage = input.readLine()) != null) {
-                activityChat.addMessage(receivedMessage);
+                System.out.println("Mensagem recebida: " + receivedMessage);
+                Message message = new Message(receivedMessage, false);
+                activityChat.addMessage(message);
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Erro ao receber a mensagem.");
         }
     }
 
     public void sendMessage(String message) {
         try {
-            output.write((message + "\n").getBytes());
-            output.flush();
+            if (clientSocket != null && clientSocket.isConnected()) {
+                System.out.println("Cliente está conectado. Enviando mensagem...");
+                output.write((message + "\n").getBytes());
+                output.flush();
+            } else {
+                System.out.println("Cliente não está conectado.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Erro ao enviar mensagem para o cliente.");
         }
     }
 

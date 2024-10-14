@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         buttonConfirmarIp.setOnClickListener(v -> {
             String ip = editTextIPconectar.getText().toString();
+            System.out.println("IP digitado: " + ip);
             Intent intent = new Intent(MainActivity.this, ActivityChat.class);
             intent.putExtra("isServer", false);
             intent.putExtra("serverIp", ip);
