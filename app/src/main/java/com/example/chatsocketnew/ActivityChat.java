@@ -34,6 +34,7 @@ public class ActivityChat extends AppCompatActivity {
     ClienteSocket clienteSocket;
     ServidorSocket servidorSocket;
     boolean isServer;
+    String username; // Armazenar username
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class ActivityChat extends AppCompatActivity {
         textViewIp = findViewById(R.id.textViewIp);
 
         isServer = getIntent().getBooleanExtra("isServer", false);
+        username = getIntent().getStringExtra("username"); // Busca o username digitado
 
         if (isServer) {
             servidorSocket = new ServidorSocket(this);
@@ -80,9 +82,9 @@ public class ActivityChat extends AppCompatActivity {
                 addMessage(message);
 
                 if (isServer && servidorSocket != null) {
-                    servidorSocket.sendMessage(mensagem);
+                    servidorSocket.sendMessage(username + ": " + mensagem);
                 } else if (clienteSocket != null) {
-                    clienteSocket.sendMessage(mensagem);
+                    clienteSocket.sendMessage(username + ": " + mensagem);
                 }
                 inputMensagem.setText("");
             }
