@@ -40,8 +40,13 @@ public class ServidorSocket extends Thread {
 
             String receivedMessage;
             while (running && (receivedMessage = input.readLine()) != null) {
+                String[] parts = receivedMessage.split(": ", 2); // Divide a mensagem
+                String username = parts[0];
+                String messageContent = parts.length > 1 ? parts[1] : "";
+
                 System.out.println("Mensagem recebida: " + receivedMessage);
-                Message message = new Message(receivedMessage, false);
+
+                Message message = new Message(messageContent, false, username);
                 activityChat.addMessage(message);
             }
         } catch (Exception e) {

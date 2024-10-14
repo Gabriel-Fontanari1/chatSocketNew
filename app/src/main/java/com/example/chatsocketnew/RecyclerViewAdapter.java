@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MessageViewHolder> {
     private List<Message> messageList;
 
     public RecyclerViewAdapter(List<Message> messages) {
@@ -23,15 +23,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         return new MessageViewHolder(view, viewType);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(MessageViewHolder holder, int position) {
         Message message = messageList.get(position);
-        ((MessageViewHolder) holder).bindMessage(message);
+        holder.bindMessage(message);
     }
 
     @Override
@@ -40,24 +40,41 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
-        public TextView textViewUsrMsg;
-        public TextView textViewMsgRecebe;
+        private TextView textViewUsrMsg; // mensagens enviadas
+        private TextView textViewUsrName; // usuário de mensagens enviadas
+        private TextView textViewMsgRecebe; // mensagens recebidas
+        private TextView textViewNomeRecebe; // nome usuário de mensagens recebidas
 
         public MessageViewHolder(View itemView, int viewType) {
             super(itemView);
 
+            // inicia as views baseado no tipo de layout
             if (viewType == R.layout.chat_one_line_enviamsg) {
                 textViewUsrMsg = itemView.findViewById(R.id.textViewUsrMsg);
+                textViewUsrName = itemView.findViewById(R.id.textViewUsrName);
             } else if (viewType == R.layout.chat_one_line_recebemsg) {
                 textViewMsgRecebe = itemView.findViewById(R.id.textViewMsgRecebe);
+                textViewNomeRecebe = itemView.findViewById(R.id.textViewNomeRecebeMsg);
             }
         }
 
         public void bindMessage(Message message) {
-            if (message.isSentByUser() && textViewUsrMsg != null) {
-                textViewUsrMsg.setText(message.getContent());
-            } else if (!message.isSentByUser() && textViewMsgRecebe != null) {
-                textViewMsgRecebe.setText(message.getContent());
+            if (message.isSentByUser()) {
+                // Configura as mensagens enviadas
+                if (textViewUsrMsg != null) {
+                    textViewUsrMsg.setText(message.getContent());
+                }
+                if (textViewUsrName != null) {
+                    textViewUsrName.setText(message.getUsername());
+                }
+            } else {
+                // Configura as mensagens recebidas
+                if (textViewMsgRecebe != null) {
+                    textViewMsgRecebe.setText(message.getContent());
+                }
+                if (textViewNomeRecebe != null) {
+                    textViewNomeRecebe.setText(message.getUsername());
+                }
             }
         }
     }

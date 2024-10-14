@@ -14,8 +14,11 @@ public class ClienteSocket extends Thread {
     private boolean running;
     private ActivityChat activityChat;
 
-    public ClienteSocket(ActivityChat activity) {
+    private String username;
+
+    public ClienteSocket(ActivityChat activity, String username) {
         this.activityChat = activity;
+        this.username = username;
     }
 
     public void connectToServer(String ip, int port) {
@@ -49,7 +52,7 @@ public class ClienteSocket extends Thread {
         try {
             String receivedMessage;
             while (running && (receivedMessage = input.readLine()) != null) {
-                Message message = new Message(receivedMessage, false);
+                Message message = new Message(receivedMessage, false, username);
                 activityChat.addMessage(message);
             }
         } catch (Exception e) {
@@ -62,8 +65,9 @@ public class ClienteSocket extends Thread {
             @Override
             public void run() {
                 try {
+                    String messageToSend = username + ": " + message;
                     System.out.println("Enviando mensagem: " + message);
-                    output.write((message + "\n").getBytes());
+                    output.write((messageToSend + "\n").getBytes());
                     output.flush();
                 } catch (Exception e) {
                     e.printStackTrace();
