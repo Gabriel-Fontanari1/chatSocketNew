@@ -60,6 +60,7 @@ public class ActivityChat extends AppCompatActivity {
         textViewIp = findViewById(R.id.textViewIp);
 
         isServer = getIntent().getBooleanExtra("isServer", false);
+
         username = getIntent().getStringExtra("username"); // Busca o username digitado
 
         if (isServer) {
@@ -71,20 +72,21 @@ public class ActivityChat extends AppCompatActivity {
         } else {
             String serverIp = getIntent().getStringExtra("serverIp");
             System.out.println("IP do servidor recebido: " + serverIp);
-            clienteSocket = new ClienteSocket(this);
+            clienteSocket = new ClienteSocket(this, username);
             clienteSocket.connectToServer(serverIp, 8080);
         }
 
         btnEnviar.setOnClickListener(v -> {
             String mensagem = inputMensagem.getText().toString().trim();
+            String nomeUsuario = getIntent().getStringExtra("username");
             if (!mensagem.isEmpty()) {
-                Message message = new Message(mensagem, true);
+                Message message = new Message(mensagem, true, nomeUsuario);
                 addMessage(message);
 
                 if (isServer && servidorSocket != null) {
-                    servidorSocket.sendMessage(username + ": " + mensagem);
+                    servidorSocket.sendMessage(mensagem);
                 } else if (clienteSocket != null) {
-                    clienteSocket.sendMessage(username + ": " + mensagem);
+                    clienteSocket.sendMessage(mensagem);
                 }
                 inputMensagem.setText("");
             }
