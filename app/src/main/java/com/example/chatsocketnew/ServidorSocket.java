@@ -30,7 +30,6 @@ public class ServidorSocket extends Thread {
         }
     }
 
-
     @Override
     public void run() {
         try {
@@ -52,18 +51,19 @@ public class ServidorSocket extends Thread {
     }
 
     public void sendMessage(String message) {
-        try {
-            if (clientSocket != null && clientSocket.isConnected()) {
-                System.out.println("Cliente está conectado. Enviando mensagem...");
-                output.write((message + "\n").getBytes());
-                output.flush();
-            } else {
-                System.out.println("Cliente não está conectado.");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("Enviando mensagem: " + message);
+                    output.write((message + "\n").getBytes());
+                    output.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Erro ao enviar mensagem.");
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Erro ao enviar mensagem para o cliente.");
-        }
+        }).start();
     }
 
     public void stopServer() {

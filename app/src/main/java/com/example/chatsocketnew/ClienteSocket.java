@@ -19,26 +19,30 @@ public class ClienteSocket extends Thread {
     }
 
     public void connectToServer(String ip, int port) {
-        try {
-            System.out.println("Tentando conectar ao servidor: " + ip + ":" + port);
-            socket = new Socket(ip, port);
-            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            output = socket.getOutputStream();
-            running = true;
-            System.out.println("Conectado ao servidor: " + ip + ":" + port);
-            start();
-        } catch (UnknownHostException e) {
-            System.out.println("Erro: Endereço IP ou nome de host desconhecido.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("Erro: Falha na conexão de rede (verifique se o IP/porta estão corretos).");
-            e.printStackTrace();
-        } catch (Exception e) {
-            System.out.println("Erro ao conectar ao servidor: " + e.getMessage());
-            e.printStackTrace();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("Tentando conectar ao servidor: " + ip + ":" + port);
+                    socket = new Socket(ip, port);
+                    input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    output = socket.getOutputStream();
+                    running = true;
+                    System.out.println("Conectado ao servidor: " + ip + ":" + port);
+                    start();
+                } catch (UnknownHostException e) {
+                    System.out.println("Erro: Endereço IP ou nome de host desconhecido.");
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    System.out.println("Erro: Falha na conexão de rede (verifique se o IP/porta estão corretos).");
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    System.out.println("Erro ao conectar ao servidor: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
-
 
     @Override
     public void run() {
@@ -54,14 +58,19 @@ public class ClienteSocket extends Thread {
     }
 
     public void sendMessage(String message) {
-        try {
-            System.out.println("Enviando mensagem: " + message);
-            output.write((message + "\n").getBytes());
-            output.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Erro ao enviar mensagem.");
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("Enviando mensagem: " + message);
+                    output.write((message + "\n").getBytes());
+                    output.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Erro ao enviar mensagem.");
+                }
+            }
+        }).start();
     }
 
     public void disconnect() {
