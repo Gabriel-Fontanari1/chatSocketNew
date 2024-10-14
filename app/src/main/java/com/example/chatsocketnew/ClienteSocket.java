@@ -10,6 +10,11 @@ public class ClienteSocket extends Thread {
     private BufferedReader input;
     private OutputStream output;
     private boolean running;
+    private ActivityChat activityChat;
+
+    public ClienteSocket(ActivityChat activity) {
+        this.activityChat = activity;
+    }
 
     public void connectToServer(String ip, int port) {
         try {
@@ -28,8 +33,7 @@ public class ClienteSocket extends Thread {
         try {
             String receivedMessage;
             while (running && (receivedMessage = input.readLine()) != null) {
-                //Passa a mensagem recebida para o recyclerView
-                System.out.println("Mensagem recebida: " + receivedMessage);
+                activityChat.addMessage(receivedMessage);  // Passa para a Activity
             }
         } catch (Exception e) {
             e.printStackTrace();

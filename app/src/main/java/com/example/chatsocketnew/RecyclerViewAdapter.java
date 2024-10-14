@@ -18,20 +18,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        //posição par mensagem enviada e ímpar seja recebida
+        //tem que arrumar isso daqui ainda, o usuario não pode enviar pelos 2 layouts
         return position % 2 == 0 ? R.layout.chat_one_line_enviamsg : R.layout.chat_one_line_recebemsg;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new MessageViewHolder(view);
+        return new MessageViewHolder(view, viewType);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         String message = messageList.get(position);
-        ((MessageViewHolder) holder).textViewMessage.setText(message);
+        ((MessageViewHolder) holder).bindMessage(message);
     }
 
     @Override
@@ -40,12 +40,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
-        public TextView textViewMessage;
+        public TextView textViewUsrName;
+        public TextView textViewUsrMsg;
+        public TextView textViewNomeRecebeMsg;
+        public TextView textViewMsgRecebe;
 
-        public MessageViewHolder(View itemView) {
+        public MessageViewHolder(View itemView, int viewType) {
             super(itemView);
-            //tem que ser finalizado
-            textViewMessage = itemView.findViewById(R.id.textViewMessage);
+
+            if (viewType == R.layout.chat_one_line_enviamsg) {
+                textViewUsrName = itemView.findViewById(R.id.textViewUsrName);
+                textViewUsrMsg = itemView.findViewById(R.id.textViewUsrMsg);
+            }
+            else if (viewType == R.layout.chat_one_line_recebemsg) {
+                textViewNomeRecebeMsg = itemView.findViewById(R.id.textViewNomeRecebeMsg);
+                textViewMsgRecebe = itemView.findViewById(R.id.textViewMsgRecebe);
+            }
+        }
+
+        public void bindMessage(String message) {
+            if (textViewUsrMsg != null) {
+                textViewUsrMsg.setText(message);
+            } else if (textViewMsgRecebe != null) {
+                textViewMsgRecebe.setText(message);
+            }
         }
     }
 }

@@ -12,6 +12,11 @@ public class ServidorSocket extends Thread {
     private BufferedReader input;
     private OutputStream output;
     private boolean running;
+    private ActivityChat activityChat;
+
+    public ServidorSocket(ActivityChat activity) {
+        this.activityChat = activity;
+    }
 
     public void startServer(int port) {
         try {
@@ -30,11 +35,9 @@ public class ServidorSocket extends Thread {
             input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             output = clientSocket.getOutputStream();
 
-            // Loop para receber mensagens
             String receivedMessage;
             while (running && (receivedMessage = input.readLine()) != null) {
-                // Aqui você pode passar a mensagem recebida para o RecyclerView
-                System.out.println("Mensagem recebida: " + receivedMessage);
+                activityChat.addMessage(receivedMessage);
             }
         } catch (Exception e) {
             e.printStackTrace();
