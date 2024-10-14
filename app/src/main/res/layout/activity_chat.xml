@@ -23,9 +23,9 @@
     <TextView
         android:id="@+id/textViewIp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_margin="16dp"
-        android:text="IP do servidor aparecerá aqui"
+        android:text="Conectado a um dispositivo."
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +36,7 @@
     <LinearLayout
         android:id="@+id/messageInputLayout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="110dp"
         android:layout_margin="8dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -47,11 +47,12 @@
             android:id="@+id/inputMensagem"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
             android:layout_weight="1"
             android:hint="Mensagem"
-            android:layout_marginBottom="30dp"
             android:padding="10dp"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/btnEnviar"

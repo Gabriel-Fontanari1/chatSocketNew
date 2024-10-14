@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, ActivityChat.class);
             intent.putExtra("isServer", true);
             startActivity(intent);
+            finish();
         });
 
         buttonConfirmarIp.setOnClickListener(v -> {
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("isServer", false);
             intent.putExtra("serverIp", ip);
             startActivity(intent);
+            finish();
         });
     }
 }
