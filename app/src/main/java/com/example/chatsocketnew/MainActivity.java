@@ -10,13 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    //atributos
     Button buttonBeHost;
     Button buttonConfirmarIp;
     EditText editTextIPconectar;
-    EditText editTextUsername; // Username
-    ServidorSocket servidorSocket;
-    ClienteSocket clienteSocket;
+    EditText editTextUsername;
 
+    //construtor
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,36 +25,36 @@ public class MainActivity extends AppCompatActivity {
         buttonBeHost = findViewById(R.id.buttonBeHost);
         buttonConfirmarIp = findViewById(R.id.buttonConfirmarIp);
         editTextIPconectar = findViewById(R.id.editTextIPconectar);
+        editTextUsername = findViewById(R.id.editTextUsername);
 
-        editTextUsername = findViewById(R.id.editTextUsername); // Username
-
-
+        //botao para hostear
         buttonBeHost.setOnClickListener(v -> {
             String username = editTextUsername.getText().toString().trim();
-            // Verifica se o campo tá vazio
             if (username.isEmpty()) {
+                //avisa o usr, sobre inserir o nome
                 Toast.makeText(MainActivity.this, "Insira um nome.", Toast.LENGTH_SHORT).show();
             } else {
                 Intent intent = new Intent(MainActivity.this, ActivityChat.class);
-                intent.putExtra("isServer", true);
-                intent.putExtra("username", username);
+                intent.putExtra("isServer", true); //define o usr como servidor
+                intent.putExtra("username", username);//manda os dados por um extra
                 startActivity(intent);
                 finish();
             }
         });
 
+        //conectar a um servidor existente
         buttonConfirmarIp.setOnClickListener(v -> {
-            String username = editTextUsername.getText().toString().trim(); // Username
-            String ip = editTextIPconectar.getText().toString();
+            String username = editTextUsername.getText().toString().trim();
+            String ip = editTextIPconectar.getText().toString(); //pega o ip digitado
             System.out.println("IP digitado: " + ip);
-            // Verifica se o campo tá vazio
             if (username.isEmpty()) {
+                //aviso se o nome de usr estiver vazio
                 Toast.makeText(MainActivity.this, "Insira um nome.", Toast.LENGTH_SHORT).show();
             } else {
                 Intent intent = new Intent(MainActivity.this, ActivityChat.class);
                 intent.putExtra("isServer", false);
-                intent.putExtra("serverIp", ip);
-                intent.putExtra("username", username); // Username
+                intent.putExtra("serverIp", ip); //passa a ip do host
+                intent.putExtra("username", username);
                 startActivity(intent);
                 finish();
             }

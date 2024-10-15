@@ -16,28 +16,31 @@ public class ClienteSocket extends Thread {
 
     private String username;
 
+    //construtor
     public ClienteSocket(ActivityChat activity, String username) {
         this.activityChat = activity;
         this.username = username;
     }
 
+    //conecta ao servidor usando a porta e ip fornecida
     public void connectToServer(String ip, int port) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     System.out.println("Tentando conectar ao servidor: " + ip + ":" + port);
+                    //cria o socket e tenta se conectar ao sevidor
                     socket = new Socket(ip, port);
                     input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     output = socket.getOutputStream();
-                    running = true;
+                    running = true; //define o estado de execução do cliente
                     System.out.println("Conectado ao servidor: " + ip + ":" + port);
-                    start();
+                    start(); //puxa a trhead para escutar as msgs do servidor
                 } catch (UnknownHostException e) {
-                    System.out.println("Erro: Endereço IP ou nome de host desconhecido.");
+                    System.out.println("Endereço IP ou nome de host desconhecido.");
                     e.printStackTrace();
                 } catch (IOException e) {
-                    System.out.println("Erro: Falha na conexão de rede (verifique se o IP/porta estão corretos).");
+                    System.out.println("Verifique se o IP ou a porta estão corretos.");
                     e.printStackTrace();
                 } catch (Exception e) {
                     System.out.println("Erro ao conectar ao servidor: " + e.getMessage());
@@ -47,20 +50,21 @@ public class ClienteSocket extends Thread {
         }).start();
     }
 
+    //metodo usado na thread para ouvir as msg do servidor
     @Override
     public void run() {
         try {
             String receivedMessage;
+            //enquanto o cliente estiver rodando, ele vai continuar escutando as msg do servidor
             while (running && (receivedMessage = input.readLine()) != null) {
-                // Recebe a mensagem no formato: "username: mensagem"
-                String[] parts = receivedMessage.split(": ", 2); // Divide a mensagem
-                String senderName = parts[0]; // O primeiro pedaço é o nome do remetente
-                String messageContent = parts.length > 1 ? parts[1] : ""; // O resto é a mensagem
+                //divide a mensagem recebida no formato "nomeusuario: mensagem"
+                String[] parts = receivedMessage.split(": ", 2); //2 indica 2 partes
+                String senderName = parts[0];
+                String messageContent = parts.length > 1 ? parts[1] : "";
+                //retorna um array de tamanho 1, vai verificar se a divisão gerou mais de uma parte, se sim, a mensagem real part[1] é atribuida na msg
 
                 System.out.println("Mensagem recebida: " + receivedMessage);
-
-                // Adiciona a mensagem ao chat como uma mensagem recebida
-                Message message = new Message(messageContent, false, senderName); // Remetente é outro usuário
+                Message message = new Message(messageContent, false, senderName);
                 activityChat.addMessage(message);
             }
         } catch (Exception e) {
@@ -68,32 +72,24 @@ public class ClienteSocket extends Thread {
         }
     }
 
-
+    //metodo para enviar msg ao servidor
     public void sendMessage(String message) {
+        //roda em uma nova thread
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    // Inclui o nome do usuário na mensagem
+                    //formata a msg
                     String messageToSend = username + ": " + message;
-                    System.out.println("Enviando mensagem: " + messageToSend);
+                    System.out.println("Mensagem enviada: " + messageToSend);
+                    //envia a msg ao servidor por output stream
                     output.write((messageToSend + "\n").getBytes());
-                    output.flush();
+                    output.flush(); //garante a entrega dos dados
                 } catch (Exception e) {
                     e.printStackTrace();
-                    System.out.println("Erro ao enviar mensagem.");
+                    System.out.println("Erro para enviar msg.");
                 }
             }
         }).start();
-    }
-
-
-    public void disconnect() {
-        running = false;
-        try {
-            socket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

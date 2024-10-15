@@ -21,6 +21,7 @@ import android.Manifest;
 
 public class ActivityChat extends AppCompatActivity {
 
+    //declaração dos componentes
     RecyclerView recyclerViewMessages;
     EditText inputMensagem;
     Button btnEnviar;
@@ -28,44 +29,54 @@ public class ActivityChat extends AppCompatActivity {
     List<Message> messageList;
     RecyclerViewAdapter recyclerViewAdapter;
 
+    //declaração dos sockets e variaveis para determinar o usuario
     ClienteSocket clienteSocket;
     ServidorSocket servidorSocket;
     boolean isServer;
-    String username; // Armazenar username
+    String username;
 
+    //construtor
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //permiti que o conteúdo da tela ocupe toda a área disponível
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat);
 
+        //verifica a permissão para acessar o estado do wifi
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1);
         }
 
+        //inicializa o recyclerview
         recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
         recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
 
+        //inicializa a lista de msg para e o adapter
         messageList = new ArrayList<>();
         recyclerViewAdapter = new RecyclerViewAdapter(messageList);
         recyclerViewMessages.setAdapter(recyclerViewAdapter);
 
+        //inicializa os componentes da interface
         inputMensagem = findViewById(R.id.inputMensagem);
         btnEnviar = findViewById(R.id.btnEnviar);
         textViewIp = findViewById(R.id.textViewIp);
 
         isServer = getIntent().getBooleanExtra("isServer", false);
 
-        username = getIntent().getStringExtra("username"); // Busca o username digitado
+        username = getIntent().getStringExtra("username");
 
+        //se for o dispositivo host, inicia o servidor de socket na porta 8080 e exibe o IP local
         if (isServer) {
-            servidorSocket = new ServidorSocket(this, username);  // Adiciona o username como parâmetro
+            servidorSocket = new ServidorSocket(this, username);
             servidorSocket.startServer(8080);
 
             String localIpAddress = getLocalIpAddress();
             textViewIp.setText("Seu IP: " + localIpAddress);
+
+            //se for o cliente, conecta ao servidor com o IP fornecido
         } else {
             String serverIp = getIntent().getStringExtra("serverIp");
             System.out.println("IP do servidor recebido: " + serverIp);
@@ -74,14 +85,17 @@ public class ActivityChat extends AppCompatActivity {
         }
 
 
+        //botao enviar msg
         btnEnviar.setOnClickListener(v -> {
             String mensagem = inputMensagem.getText().toString().trim();
-            String nomeUsuario = username; // Usa o username correto
+            String nomeUsuario = username;
 
+            //verifica se não está vazio
             if (!mensagem.isEmpty()) {
-                Message message = new Message(mensagem, true, nomeUsuario); // Mensagem enviada pelo próprio usuário
+                Message message = new Message(mensagem, true, nomeUsuario);
                 addMessage(message);
 
+                //envia via socket dependendo se for servidor ou cliente
                 if (isServer && servidorSocket != null) {
                     servidorSocket.sendMessage(mensagem);
                 } else if (clienteSocket != null) {
@@ -92,6 +106,7 @@ public class ActivityChat extends AppCompatActivity {
         });
     }
 
+    //add msg na lista e atualiza o recycler
     public void addMessage(Message message) {
         runOnUiThread(() -> {
             messageList.add(message);
@@ -100,12 +115,14 @@ public class ActivityChat extends AppCompatActivity {
         });
     }
 
+    //pega o ip do dispositivo usando o wifimanager
     private String getLocalIpAddress() {
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
         return Formatter.formatIpAddress(ipAddress);
     }
 
+    //verifica o resultado da solicitação de permissões
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
